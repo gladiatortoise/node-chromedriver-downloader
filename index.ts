@@ -67,6 +67,10 @@ const downloadChromedriver = async (fullVersion : string, destinationDir : strin
     await writeFile(infoDestPath, '')
 
     onProgress('chromedriver binaries succesfully downloaded')
+
+    // Wait a reasonable time beacause instantly using an unzipped webdriver caused issues on some environments
+    await new Promise((resolve, reject) => setTimeout(resolve, 1500))
+
     return binaryDestPath
 }
 
