@@ -25,16 +25,24 @@ const getLatestRelease = async (majorVersion : string) : Promise<string> => {
     return text
 }
 
+const specificOsPlatformMap = {
+    'win32': 'win32',
+    'darwin': 'mac64',
+    'linux': 'linux64'
+}
+
 const downloadChromedriver = async (fullVersion : string, destinationDir : string, onProgress = console.log) : Promise<string> => {
-    if (!['win32', 'darwin', 'linux'].includes(osPlatform)) throw new Error("Unsupported OS platform for chromedriver: " + osPlatform)
+    if (!(Object.keys(specificOsPlatformMap).includes(osPlatform))) throw new Error("Unsupported OS platform for chromedriver: " + osPlatform)
 
     // not all chrome versions have a driver. Therefore find the latest one for the current major
     var currentMajor = getMajorVersion(fullVersion)
     var latestRelease = await getLatestRelease(currentMajor)
 
-    const RELASE_DOWNLOAD_URL = `https://chromedriver.storage.googleapis.com/${latestRelease}/chromedriver_${osPlatform}.zip`
+    
 
-    const zipDestPath = path.join(destinationDir, `chromedriver_${osPlatform}_${latestRelease}.zip`)
+    const RELASE_DOWNLOAD_URL = `https://chromedriver.storage.googleapis.com/${latestRelease}/chromedriver_${specificOsPlatformMap[osPlatform]}.zip`
+
+    const zipDestPath = path.join(destinationDir, `chromedriver_${specificOsPlatformMap[osPlatform]}_${latestRelease}.zip`)
     const infoDestPath = path.join(destinationDir, `CHROMEDRIVER_VER_IS_${currentMajor}`)
 
     onProgress(`Downloading from ${RELASE_DOWNLOAD_URL}..`)
